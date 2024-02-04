@@ -24,6 +24,6 @@ type Transaction struct {
 	From   uuid.UUID `json:"from" gorm:"type:uuid;not null"` // строковый ID исходящего кошелька
 	To     uuid.UUID `json:"to" gorm:"type:uuid;not null"`   // строковый ID входящего кошелька
 	Amount float64   `json:"amount" gorm:"not null"`         // дробное число, сумма перевода
-	Time   time.Time `json:"time" gorm:"default:now()"`      // дата и время перевода в формате RFC 3339
+	Time   time.Time `json:"time" gorm:"default:now()"`      // дата и время перевода
 
 }

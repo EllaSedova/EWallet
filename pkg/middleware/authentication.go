@@ -18,10 +18,10 @@ var JwtAuthentication = func(next http.Handler) http.Handler {
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
-		notAuth := []string{"/api/v1/wallet", "/api/v1/wallet/login"} //List of endpoints that doesn't require auth
-		requestPath := r.URL.Path                                     //current request path
+		notAuth := []string{"/api/v1/wallet", "/api/v1/wallet/login"} // список эндпоинтов, не требующих аутентификации
+		requestPath := r.URL.Path
 
-		//check if request does not need authentication, serve the request if it doesn't need it
+		// проверяем нужна ли аутентификация
 		for _, value := range notAuth {
 			if value == requestPath {
 				next.ServeHTTP(w, r)
@@ -30,49 +30,48 @@ var JwtAuthentication = func(next http.Handler) http.Handler {
 		}
 
 		response := make(map[string]interface{})
-		tokenHeader := r.Header.Get("Authorization") //Grab the token from the header
+		tokenHeader := r.Header.Get("Authorization") // достаём токен
 
-		if tokenHeader == "" { //Token is missing, returns with error code 403 Unauthorized
-			response = t.Message(403, "Missing auth token")
+		if tokenHeader == "" { // нет токена
+			response = t.Message(403, "Отсутствует токен аутентификации")
 			w.WriteHeader(http.StatusForbidden)
 			w.Header().Add("Content-Type", "application/json")
 			t.Respond(w, response)
 			return
 		}
 
-		splitted := strings.Split(tokenHeader, " ") //The token normally comes in format `Bearer {token-body}`, we check if the retrieved token matched this requirement
+		splitted := strings.Split(tokenHeader, " ") // токен приходит в формате `Bearer {token-body}` и его надо обработать
 		if len(splitted) != 2 {
-			response = t.Message(403, "Invalid/Malformed auth token")
+			response = t.Message(403, "Недействительный/неправильно сформированный токен аутентификации")
 			w.WriteHeader(http.StatusForbidden)
 			w.Header().Add("Content-Type", "application/json")
 			t.Respond(w, response)
 			return
 		}
 
-		tokenPart := splitted[1] //Grab the token part, what we are truly interested in
+		tokenPart := splitted[1] // берём нужную часть токена
 		tk := &manager.Token{}
 
 		token, err := jwt.ParseWithClaims(tokenPart, tk, func(token *jwt.Token) (interface{}, error) {
 			return []byte(os.Getenv("token_password")), nil
 		})
 
-		if err != nil { //Malformed token, returns with http code 403 as usual
-			response = t.Message(403, "Malformed authentication token")
+		if err != nil {
+			response = t.Message(403, "Неправильно сформированный токен аутентификации")
 			w.WriteHeader(http.StatusForbidden)
 			w.Header().Add("Content-Type", "application/json")
 			t.Respond(w, response)
 			return
 		}
 
-		if !token.Valid { //Token is invalid, maybe not signed on this server
-			response = t.Message(403, "Token is not valid.")
+		if !token.Valid {
+			response = t.Message(403, "Токен недействителен.")
 			w.WriteHeader(http.StatusForbidden)
 			w.Header().Add("Content-Type", "application/json")
 			t.Respond(w, response)
 			return
 		}
 
-		//Everything went well, proceed with the request and set the caller to the user retrieved from the parsed token
 		ctx := context.WithValue(r.Context(), "walletId", tk.WalletId)
 		r = r.WithContext(ctx)
 

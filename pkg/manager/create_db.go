@@ -12,7 +12,7 @@ import (
 var db *gorm.DB
 
 func init() {
-	fmt.Println("init")
+
 	e := godotenv.Load("pkg/cfg/dev.env")
 	if e != nil {
 		fmt.Print(e)

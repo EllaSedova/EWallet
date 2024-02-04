@@ -5,6 +5,7 @@ import (
 )
 
 var NotFoundHandler = func(w http.ResponseWriter, r *http.Request) {
+
 	w.WriteHeader(http.StatusNotFound)
-	Respond(w, Message(404, "This resources was not found on our server"))
+	Respond(w, Message(404, "Этот ресурс не был найден на данном сервере"))
 }

@@ -12,6 +12,7 @@ import (
 
 // CreateTransaction перевод средств с одного кошелька на другой
 var CreateTransaction = func(w http.ResponseWriter, r *http.Request) {
+
 	transaction := &manager.Transaction{}
 	err := json.NewDecoder(r.Body).Decode(transaction) //декодирует тело запроса (to, amount) в struct
 	if err != nil {
@@ -41,11 +42,6 @@ var CreateTransaction = func(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	t.Respond(w, resp)
 }
-
-//"200":
-//description: История транзакций получена
-//"404":
-//description: Указанный кошелек не найден
 
 // GetTransactionHistory получение историй входящих и исходящих транзакций
 var GetTransactionHistory = func(w http.ResponseWriter, r *http.Request) {

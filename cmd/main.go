@@ -22,7 +22,7 @@ func main() {
 	router.HandleFunc("/api/v1/wallet/{walletId}/history", controllers.GetTransactionHistory).Methods("GET")
 	router.HandleFunc("/api/v1/wallet/{walletId}", controllers.GetWalletBalance).Methods("GET")
 
-	router.Use(middleware.JwtAuthentication) //attach JWT auth middleware
+	router.Use(middleware.JwtAuthentication) // JWT auth middleware
 
 	router.NotFoundHandler = http.HandlerFunc(tools.NotFoundHandler)
 
@@ -33,7 +33,7 @@ func main() {
 
 	fmt.Println(port)
 
-	err := http.ListenAndServe(":"+port, router) //Launch the middleware, visit localhost:8000/api
+	err := http.ListenAndServe(":"+port, router)
 	if err != nil {
 		fmt.Print(err)
 	}

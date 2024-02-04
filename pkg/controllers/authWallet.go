@@ -12,6 +12,7 @@ import (
 
 // CreateWallet создать кошелёк
 var CreateWallet = func(w http.ResponseWriter, r *http.Request) {
+
 	wallet := &manager.Wallet{}
 	response := wallet.Create() //Создать кошелёк
 
@@ -26,6 +27,7 @@ var CreateWallet = func(w http.ResponseWriter, r *http.Request) {
 
 // GetWalletBalance получение текущего состояния кошелька
 var GetWalletBalance = func(w http.ResponseWriter, r *http.Request) {
+
 	id := r.Context().Value("walletId").(uuid.UUID)
 
 	data := manager.GetWallet(id)
@@ -42,11 +44,12 @@ var GetWalletBalance = func(w http.ResponseWriter, r *http.Request) {
 
 // WalletLogin перегенерировать JWT для кошелька
 var WalletLogin = func(w http.ResponseWriter, r *http.Request) {
+
 	wallet := &manager.Wallet{}
 	err := json.NewDecoder(r.Body).Decode(wallet) //декодирует тело запроса в struct
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		t.Respond(w, t.Message(400, "Invalid request"))
+		t.Respond(w, t.Message(400, "Недопустимый реквест"))
 		return
 	}
 	resp := manager.Login(wallet.ID)
