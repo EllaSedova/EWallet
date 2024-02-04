@@ -56,8 +56,7 @@ func (transaction *Transaction) Create() map[string]interface{} {
 		db.Delete(&transaction, transaction.ID)
 		return t.Message(400, "Не удалось создать транзакцию.")
 	}
-	response := t.Message(200, "Перевод успешно проведен")
-	response["transaction"] = transaction
+	response := t.Message(200, "Перевод успешно проведён")
 	return response
 }
 
