@@ -1,8 +1,9 @@
 package main
 
 import (
-	"EWallet/src/app"
-	"EWallet/src/controllers"
+	"EWallet/pkg/controllers"
+	"EWallet/pkg/middleware"
+	"EWallet/pkg/tools"
 
 	"github.com/gorilla/mux"
 
@@ -21,9 +22,9 @@ func main() {
 	router.HandleFunc("/api/v1/wallet/{walletId}/history", controllers.GetTransactionHistory).Methods("GET")
 	router.HandleFunc("/api/v1/wallet/{walletId}", controllers.GetWalletBalance).Methods("GET")
 
-	router.Use(app.JwtAuthentication) //attach JWT auth middleware
+	router.Use(middleware.JwtAuthentication) //attach JWT auth middleware
 
-	router.NotFoundHandler = http.HandlerFunc(app.NotFoundHandler)
+	router.NotFoundHandler = http.HandlerFunc(tools.NotFoundHandler)
 
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -32,7 +33,7 @@ func main() {
 
 	fmt.Println(port)
 
-	err := http.ListenAndServe(":"+port, router) //Launch the app, visit localhost:8000/api
+	err := http.ListenAndServe(":"+port, router) //Launch the middleware, visit localhost:8000/api
 	if err != nil {
 		fmt.Print(err)
 	}

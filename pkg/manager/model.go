@@ -1,4 +1,4 @@
-package models
+package manager
 
 import (
 	"github.com/dgrijalva/jwt-go"

@@ -1,11 +1,10 @@
-package app
+package tools
 
 import (
-	t "EWallet/src/tools"
 	"net/http"
 )
 
 var NotFoundHandler = func(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotFound)
-	t.Respond(w, t.Message(false, "This resources was not found on our server"))
+	Respond(w, Message(404, "This resources was not found on our server"))
 }

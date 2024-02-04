@@ -1,4 +1,4 @@
-package models
+package manager
 
 import (
 	"github.com/jinzhu/gorm"
@@ -13,7 +13,7 @@ var db *gorm.DB
 
 func init() {
 	fmt.Println("init")
-	e := godotenv.Load("src/cfg/dev.env")
+	e := godotenv.Load("pkg/cfg/dev.env")
 	if e != nil {
 		fmt.Print(e)
 	}
@@ -35,7 +35,6 @@ func init() {
 
 	db.Debug().AutoMigrate(&Wallet{}, &Transaction{})
 
-	//db.AddForeignKey("from", "wallet(id)", "CASCADE", "CASCADE")
 }
 
 func GetDB() *gorm.DB {

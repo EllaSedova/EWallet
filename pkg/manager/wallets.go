@@ -1,10 +1,9 @@
 // Создание и аутентификация кошелька
 
-package models
+package manager
 
 import (
-	t "EWallet/src/tools"
-
+	t "EWallet/pkg/tools"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
@@ -13,6 +12,15 @@ import (
 	"os"
 )
 
+//"200":
+//description: Кошелек создан
+//content:
+//application/json:
+//schema:
+//$ref: "#/components/schemas/Wallet"
+//"400":
+//description: Ошибка в запросе
+
 // Create создаёт новый кошелёк и генерирует токен JWT
 func (wallet *Wallet) Create() map[string]interface{} {
 	wallet.Balance = 100.0
@@ -20,7 +28,7 @@ func (wallet *Wallet) Create() map[string]interface{} {
 	GetDB().Create(wallet)
 
 	if len(wallet.ID.String()) <= 0 {
-		return t.Message(false, "Failed to create wallet, connection error.")
+		return t.Message(400, "Не удалось создать кошелёк")
 	}
 
 	// создаём JWT токен для нового кошелька
@@ -28,7 +36,7 @@ func (wallet *Wallet) Create() map[string]interface{} {
 	wallet.Token = tokenString
 	fmt.Println("token: ", tokenString)
 
-	response := t.Message(true, "Wallet has been created")
+	response := t.Message(200, "Wallet has been created")
 	response["wallet"] = wallet
 	return response
 }
@@ -76,9 +84,9 @@ func Login(id uuid.UUID) map[string]interface{} {
 	err := GetDB().Table("wallets").Where("id = ?", id).First(wallet).Error
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
-			return t.Message(false, "Кошелёк не найден")
+			return t.Message(400, "Кошелёк не найден")
 		}
-		return t.Message(false, "Connection error. Please retry")
+		return t.Message(404, "Connection error. Please retry")
 	}
 
 	// перегенерируем JWT токен
@@ -86,7 +94,7 @@ func Login(id uuid.UUID) map[string]interface{} {
 	wallet.Token = tokenString
 	fmt.Println("token: ", tokenString)
 
-	response := t.Message(true, "JWT токен обновлён")
+	response := t.Message(200, "JWT токен обновлён")
 	response["wallet"] = wallet
 	return response
 }

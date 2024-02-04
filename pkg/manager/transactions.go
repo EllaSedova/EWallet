@@ -1,9 +1,9 @@
-package models
+package manager
 
 import (
-	t "EWallet/src/tools"
+	t "EWallet/pkg/tools"
 
-	uuid "github.com/google/uuid"
+	"github.com/google/uuid"
 	"github.com/jinzhu/gorm"
 )
 
@@ -11,7 +11,7 @@ import (
 func (transaction *Transaction) Validate() (map[string]interface{}, bool) {
 	// проверяем сумму перевода
 	if transaction.Amount <= 0 {
-		return t.Message(false, "Неверная сумма перевода"), false
+		return t.Message(400, "Неверная сумма перевода"), false
 	}
 
 	// проверяем, что в таблице wallets присутствуют id кошельков "from" и "to"
@@ -19,21 +19,21 @@ func (transaction *Transaction) Validate() (map[string]interface{}, bool) {
 	GetDB()
 	err := GetDB().Table("wallets").Where("id = ?", transaction.From).First(walletFrom).Error
 	if err == gorm.ErrRecordNotFound {
-		return t.Message(false, "Отправителя не существует"), false
+		return t.Message(404, "Отправителя не существует"), false
 	}
 
 	walletTo := &Wallet{}
 	err = GetDB().Table("wallets").Where("id = ?", transaction.To).First(walletTo).Error
 	if err == gorm.ErrRecordNotFound {
-		return t.Message(false, "Получателя не существует"), false
+		return t.Message(404, "Получателя не существует"), false
 	}
 
 	// проверяем баланс отправителя (balance >= amount)
 	if walletFrom.Balance < transaction.Amount {
-		return t.Message(false, "Не достаточно средств на счёте"), false
+		return t.Message(400, "Не достаточно средств на счёте"), false
 	}
 
-	return t.Message(false, "Requirement passed"), true
+	return t.Message(200, "Requirement passed"), true
 }
 
 // Create создаёт новую транзакцию
@@ -45,16 +45,16 @@ func (transaction *Transaction) Create() map[string]interface{} {
 	GetDB().Create(transaction)
 
 	if transaction.ID <= 0 {
-		return t.Message(false, "Failed to create transaction, connection error.")
+		return t.Message(400, "Failed to create transaction, connection error.")
 	}
 
 	flag := WalletUpdate(transaction)
 	if !flag {
 		// удаляем запись о транзакции из таблицы transactions
 		db.Delete(&transaction, transaction.ID)
-		return t.Message(false, "Failed to create transaction. Try again.")
+		return t.Message(400, "Failed to create transaction. Try again.")
 	}
-	response := t.Message(true, "Transaction has been created")
+	response := t.Message(200, "Перевод успешно проведен")
 	response["transaction"] = transaction
 	return response
 }
