@@ -48,6 +48,7 @@ POST /api/v1/wallet
     }
 }
 ```
+status code: 200 OK
 
 ### Перевод средств
 ```
@@ -78,16 +79,9 @@ Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJXYWxsZXRJZCI6ImU2ODM2MGY0LWJiNTMt
 {
     "description": "Перевод успешно проведен",
     "status": 200,
-    "transaction": {
-        "ID": 9,
-        "from": "e68360f4-bb53-43dd-a24d-2a38f28e1f80",
-        "to": "3fa2d6f8-120a-4400-bd85-79107b5e179d",
-        "amount": 50,
-        "time": "2024-02-04T22:15:18.814246+03:00"
-    }
 }
 ```
-HTTP/1.1 200 OK
+status code: 200 OK
 
 ### Получение истории транзакций
 ```
@@ -129,6 +123,7 @@ Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJXYWxsZXRJZCI6IjI1MTk3ZDE5LTQ4OGEt
     "status": 200
 }
 ```
+status code: 200 OK
 
 ### Получение состояния кошелька
 ```
@@ -156,6 +151,7 @@ Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJXYWxsZXRJZCI6IjI1MTk3ZDE5LTQ4OGEt
     "status": 200
 }
 ```
+status code: 200 OK
 
 ### Аутентификация пользователя (необходима для того, чтобы перегенерировать JWT)
 ```
@@ -187,6 +183,7 @@ Content-Type: application/json
     }
 }
 ```
+status code: 200 OK
 ## База данных
 Данные кошельков и транзакций сохраняются в базе данных.  
 На основании учётных данных из файла .env производится подключение к БД. При первом запуске автоматически создаются таблицы:
