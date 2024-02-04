@@ -156,6 +156,36 @@ Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJXYWxsZXRJZCI6IjI1MTk3ZDE5LTQ4OGEt
 }
 ```
 
+### Аутентификация пользователя (необходима для того, чтобы перегенерировать JWT)
+```
+POST /api/v1/wallet/login 
+```
+Параметры запроса:
+- JSON-объект в теле запроса с параметрами:
+  - id: ID кошелька, для которого нужно перегенерировать JWT
+
+Пример запроса:
+```
+POST /api/v1/wallet/login
+```
+```json
+Content-Type: application/json
+{
+  "id": "56f4b6dd-9071-433d-94df-77a0a36c71bc"
+}
+```
+Пример ответа:
+```json
+{
+    "description": "JWT токен обновлён",
+    "status": 200,
+    "wallet": {
+        "id": "56f4b6dd-9071-433d-94df-77a0a36c71bc",
+        "balance": 88,
+        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJXYWxsZXRJZCI6IjU2ZjRiNmRkLTkwNzEtNDMzZC05NGRmLTc3YTBhMzZjNzFiYyJ9.s4i0p_rxgxGlmzieM1jkILBLwDbjBL4UM14vJ7z7ceE"
+    }
+}
+```
 ## База данных
 Данные кошельков и транзакций сохраняются в базе данных.
 На основании учётных данных из файла .env производится подключение к БД. При первом запуске автоматически создаются таблицы:
